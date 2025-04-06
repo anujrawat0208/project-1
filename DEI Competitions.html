@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEI Competitions</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f0f3fa;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        .top-header {
+            background: #2196f3;
+            padding: 5px 0;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        .events-list {
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        .headquote {
+            font-size: 16px;
+            flex-grow: 1;
+        }
+        .header-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo img {
+            width: 100px;
+        }
+        .register-btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .register-btn:hover {
+            background: #0056b3;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+        .latest-events {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .heading-sect {
+            font-size: 20px;
+            font-weight: bold;
+            background: #00aed9;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .latest-events-ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .latest-events-ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .latest-events-ul li a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        .latest-events-ul li a:hover {
+            text-decoration: underline;
+        }
+        .event-date {
+            color: #666;
+            font-size: 14px;
+            background: #f9f9f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .coordinator-info {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        .coordinator-icon {
+            margin-right: 5px;
+            color: #007bff;
+        }
+        .pdf-icon {
+            color: #d9534f;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+        .faculty-filter {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .faculty-filter label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .faculty-filter select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .faculty-tag {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0056b3;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="container" style="display: flex; align-items: center;">
+            <b class="events-list">Events:</b>
+            <marquee class="headquote">Here are some of the exciting events you can participate in:</marquee>
+        </div>
+    </div>
+    <div class="header-menu">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo"><img src="logo.png"></div>
+            <a href="Register.html" class="register-btn">Register</a>
+        </div>
+    </div>
+    <img src="slider.jpg">
+    <div class="container">
+        <div class="latest-events">
+            <div class="heading-sect">
+                <h3 class="head-title">Latest Events</h3>
+            </div>
+            <div class="faculty-filter">
+                <label for="faculty-select">Filter by Faculty:</label>
+                <select id="faculty-select">
+                    <option value="all">All Faculties</option>
+                    <option value="Faculty of Arts">Faculty of Arts</option>
+                    <option value="Faculty of Ayush">Faculty of Ayush</option>
+                    <option value="Faculty of Architecture">Faculty of Architecture</option>
+                    <option value="CART">CART</option>
+                    <option value="Faculty of Commerce">Faculty of Commerce</option>
+                    <option value="Faculty of Engineering">Faculty of Engineering</option>
+                    <option value="Faculty of Education">Faculty of Education</option>
+                    <option value="Faculty of Science">Faculty of Science</option>
+                    <option value="Faculty of Social Science">Faculty of Social Science</option>
+                    <option value="Technical College">Technical College</option>
+                </select>
+            </div>
+            <ul id="competition-list" class="latest-events-ul">
+                <!-- Competitions will be loaded here via JavaScript -->
+            </ul>
+        </div>
+    </div>
+    <script>
+        function loadCompetitions(facultyFilter = 'all') {
+            const competitions = JSON.parse(localStorage.getItem("competitions")) || [];
+            const today = new Date();
+            const list = document.getElementById("competition-list");
+            
+            // Clear any existing items
+            list.innerHTML = "";
+            
+            // Create an array to store valid competitions
+            let validCompetitions = [];
+            
+            competitions.forEach(comp => {
+                const lastDate = new Date(comp.date);
+                if (lastDate >= today) {
+                    // Add to valid competitions
+                    validCompetitions.push(comp);
+                    
+                    // Skip this competition if filtering by faculty and it doesn't match
+                    if (facultyFilter !== 'all' && comp.faculty !== facultyFilter) {
+                        return;
+                    }
+                    
+                    // Format the date for display
+                    const formattedDate = lastDate.toLocaleDateString('en-US', {
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    const listItem = document.createElement("li");
+                    listItem.style.flexDirection = "column";
+                    listItem.style.alignItems = "flex-start";
+                    
+                    // Create main info div with competition link and date
+                    const mainInfo = document.createElement("div");
+                    mainInfo.style.display = "flex";
+                    mainInfo.style.justifyContent = "space-between";
+                    mainInfo.style.width = "100%";
+                    mainInfo.style.alignItems = "center";
+                    
+                    // Create competition link with PDF indicator
+                    const link = document.createElement("a");
+                    link.href = comp.pdf || 'javascript:void(0)';
+                    link.target = comp.pdf ? "_blank" : "";
+                    
+                    // Only show PDF icon if PDF exists
+                    if (comp.pdf) {
+                        link.innerHTML = `${comp.name} <span class="pdf-icon">[PDF]</span>`;
+                        link.title = "Click to open PDF";
+                    } else {
+                        link.innerHTML = `${comp.name}`;
+                        link.style.cursor = "default";
+                        link.title = "No PDF available";
+                        // Prevent default click behavior if no PDF
+                        link.addEventListener('click', function(e) {
+                            if (!comp.pdf) {
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                    
+                    // Create date span
+                    const dateSpan = document.createElement("span");
+                    dateSpan.className = "event-date";
+                    dateSpan.innerText = "Last Date: " + formattedDate;
+                    
+                    // Add to main info div
+                    mainInfo.appendChild(link);
+                    mainInfo.appendChild(dateSpan);
+                    
+                    // Create coordinator info
+                    if (comp.coordinator) {
+                        const coordInfo = document.createElement("div");
+                        coordInfo.className = "coordinator-info";
+                        coordInfo.innerHTML = `<span class="coordinator-icon">👨‍🏫</span> Coordinator: <strong>${comp.coordinator}</strong>`;
+                        
+                        // Add to list item
+                        listItem.appendChild(mainInfo);
+                        listItem.appendChild(coordInfo);
+                    } else {
+                        // Just add main info if no coordinator
+                        listItem.appendChild(mainInfo);
+                    }
+                    
+                    list.appendChild(listItem);
+                }
+            });
+            
+            // Update localStorage with only valid competitions
+            if (competitions.length !== validCompetitions.length) {
+                localStorage.setItem("competitions", JSON.stringify(validCompetitions));
+            }
+            
+            if (list.children.length === 0) {
+                const noEvents = document.createElement("li");
+                noEvents.innerText = facultyFilter === 'all' 
+                    ? "No upcoming events at this time." 
+                    : `No upcoming events for ${facultyFilter} at this time.`;
+                list.appendChild(noEvents);
+            }
+        }
+        
+        // Add event listener for faculty filter
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initial load of all competitions
+            loadCompetitions();
+            
+            // Set up faculty filter
+            const facultySelect = document.getElementById("faculty-select");
+            facultySelect.addEventListener("change", function() {
+                loadCompetitions(this.value);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        td a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        td a:hover {
+            text-decoration: underline;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .edit-btn {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 5px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .edit-btn:hover {
+            background: #ffb000;
+        }
+        .faculty-filter {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .faculty-filter label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .faculty-filter select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .cancel-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .cancel-btn:hover {
+            background-color: #c0392b;
+        }
+        #pdfSection {
+            display: block;
+        }
+        #editPdfSection {
+            display: none;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+        .nav-btn.active {
+            background-color: #0056b3;
+        }
+        .nav-btn:hover {
+            background-color: #0056b3;
+        }
+        .registrations-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .registrations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .registrations-table th,
+        .registrations-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: #000;
+        }
+        .registrations-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #000;
+        }
+        .registrations-table tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Dashboard</h1>
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showSection('dashboard')">Teacher Dashboard</button>
+            <button class="nav-btn" onclick="showSection('registrations')">Manage Registrations</button>
+        </div>
+        
+        <div id="dashboard-section">
+            <h2>Add New Competition</h2>
+            <form id="competition-form">
+                <label for="compName">Competition Name: *</label>
+                <input type="text" id="compName" required>
+                <label for="teacherName">Coordinator Name:</label>
+                <input type="text" id="teacherName" placeholder="Enter your name as the coordinator">
+                <label for="faculty">Select Faculty:</label>
+                <select id="faculty">
+                    <option value="" disabled selected>-- Select Faculty --</option>
+                    <option value="Faculty of Arts">Faculty of Arts</option>
+                    <option value="Faculty of Ayush">Faculty of Ayush</option>
+                    <option value="Faculty of Architecture">Faculty of Architecture</option>
+                    <option value="CART">CART</option>
+                    <option value="Faculty of Commerce">Faculty of Commerce</option>
+                    <option value="Faculty of Engineering">Faculty of Engineering</option>
+                    <option value="Faculty of Education">Faculty of Education</option>
+                    <option value="Faculty of Science">Faculty of Science</option>
+                    <option value="Faculty of Social Science">Faculty of Social Science</option>
+                    <option value="Technical College">Technical College</option>
+                </select>
+                <label for="lastDate">Last Date: *</label>
+                <input type="date" id="lastDate" required>
+                <div id="pdfSection">
+                    <label for="pdfFile">Upload PDF:</label>
+                    <input type="file" id="pdfFile" accept=".pdf">
+                </div>
+                <div id="editPdfSection" style="display: none;">
+                    <label>PDF Options:</label>
+                    <div style="margin-top: 10px;">
+                        <button type="button" id="uploadNewPdf" class="edit-btn">Upload New File</button>
+                        <button type="button" id="removePdf" class="delete-btn">Remove File</button>
+                    </div>
+                    <div id="pdfUploadSection" style="display: none; margin-top: 10px;">
+                        <input type="file" id="editPdfFile" accept=".pdf">
+                    </div>
+                </div>
+                <div id="editButtons" style="display: none;">
+                    <button type="submit">Update Competition</button>
+                    <button type="button" id="cancelEdit" class="cancel-btn">Cancel</button>
+                </div>
+                <button type="submit" id="addButton">Add Competition</button>
+            </form>
+            <h2>Current Competitions</h2>
+            <div class="faculty-filter">
+                <label for="faculty-filter">Filter by Faculty:</label>
+                <select id="faculty-filter">
+                    <option value="all">All Faculties</option>
+                    <option value="Faculty of Arts">Faculty of Arts</option>
+                    <option value="Faculty of Ayush">Faculty of Ayush</option>
+                    <option value="Faculty of Architecture">Faculty of Architecture</option>
+                    <option value="CART">CART</option>
+                    <option value="Faculty of Commerce">Faculty of Commerce</option>
+                    <option value="Faculty of Engineering">Faculty of Engineering</option>
+                    <option value="Faculty of Education">Faculty of Education</option>
+                    <option value="Faculty of Science">Faculty of Science</option>
+                    <option value="Faculty of Social Science">Faculty of Social Science</option>
+                    <option value="Technical College">Technical College</option>
+                </select>
+            </div>
+            <table id="competitionList">
+                <thead>
+                    <tr>
+                        <th>Competition Name</th>
+                        <th>Faculty</th>
+                        <th>Last Date</th>
+                        <th>Coordinator</th>
+                        <th>PDF</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="registrations-section" class="registrations-section">
+            <h2>Student Registrations</h2>
+            <div class="faculty-filter">
+                <label for="registration-faculty-filter">Filter by Faculty:</label>
+                <select id="registration-faculty-filter">
+                    <option value="all">All Faculties</option>
+                    <option value="Faculty of Arts">Faculty of Arts</option>
+                    <option value="Faculty of Ayush">Faculty of Ayush</option>
+                    <option value="Faculty of Architecture">Faculty of Architecture</option>
+                    <option value="CART">CART</option>
+                    <option value="Faculty of Commerce">Faculty of Commerce</option>
+                    <option value="Faculty of Engineering">Faculty of Engineering</option>
+                    <option value="Faculty of Education">Faculty of Education</option>
+                    <option value="Faculty of Science">Faculty of Science</option>
+                    <option value="Faculty of Social Science">Faculty of Social Science</option>
+                    <option value="Technical College">Technical College</option>
+                </select>
+            </div>
+            <div class="faculty-filter">
+                <label for="competition-filter">Filter by Competition:</label>
+                <select id="competition-filter">
+                    <option value="all">All Competitions</option>
+                </select>
+            </div>
+            <table class="registrations-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Roll Number</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody id="registrations-list"></tbody>
+            </table>
+            <div id="certificate-section" style="display: none; text-align: center; margin-top: 20px;">
+                <button id="generate-certificate" class="nav-btn" style="background-color: #28a745;">
+                    Generate Certificates
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("competition-form");
+            const compList = document.getElementById("competitionList");
+            
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                let compName = document.getElementById("compName").value;
+                let lastDate = document.getElementById("lastDate").value;
+                let faculty = document.getElementById("faculty").value;
+                let teacherName = document.getElementById("teacherName").value;
+                
+                // Basic validation - check for competition name and last date
+                if (!compName) {
+                    alert("Competition name is required!");
+                    return;
+                }
+                
+                if (!lastDate) {
+                    alert("Last date is required!");
+                    return;
+                }
+                
+                // Check if we're editing an existing competition
+                const editingRowIndex = form.dataset.editingRow;
+                
+                if (editingRowIndex) {
+                    // We're updating an existing competition
+                    const row = compList.rows[editingRowIndex - 1];
+                    let pdfURL = form.dataset.currentPdfUrl;
+                    
+                    // Check if a new PDF was uploaded
+                    const pdfFile = document.getElementById("editPdfFile").files[0];
+                    if (pdfFile) {
+                        let reader = new FileReader();
+                        reader.readAsDataURL(pdfFile);
+                        reader.onload = function (event) {
+                            pdfURL = event.target.result;
+                            updateRow(row, compName, faculty, lastDate, teacherName, pdfURL);
+                        };
+                    } else {
+                        updateRow(row, compName, faculty, lastDate, teacherName, pdfURL);
+                    }
+                } else {
+                    // We're adding a new competition
+                    let pdfFile = document.getElementById("pdfFile").files[0];
+                    let pdfURL = '';
+                    
+                    if (pdfFile) {
+                        let reader = new FileReader();
+                        reader.readAsDataURL(pdfFile);
+                        reader.onload = function (event) {
+                            pdfURL = event.target.result;
+                            addNewCompetition(compName, faculty, lastDate, teacherName, pdfURL);
+                        };
+                    } else {
+                        addNewCompetition(compName, faculty, lastDate, teacherName, pdfURL);
+                    }
+                }
+                
+                // Reset the form
+                form.reset();
+                delete form.dataset.editingRow;
+                delete form.dataset.currentPdfUrl;
+                document.getElementById("pdfSection").style.display = "block";
+                document.getElementById("editPdfSection").style.display = "none";
+                document.getElementById("editButtons").style.display = "none";
+                document.getElementById("addButton").style.display = "block";
+            });
+            
+            // Function to update a row with new values
+            function updateRow(row, name, faculty, date, teacherName, pdfUrl) {
+                row.innerHTML = `
+                    <td><a href="${pdfUrl || '#'}" target="_blank">${name}</a></td>
+                    <td>${faculty || 'Not specified'}</td>
+                    <td>${date || 'Not specified'}</td>
+                    <td>${teacherName || 'Not specified'}</td>
+                    <td>${pdfUrl ? `<a href="${pdfUrl}" target="_blank">View PDF</a>` : 'No PDF'}</td>
+                    <td>
+                        <button class="edit-btn">Edit</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                `;
+                
+                // Save to localStorage
+                saveCompetitions();
+                
+                // Notify user
+                alert("Competition updated successfully! Changes will be reflected across all pages.");
+            }
+            
+            // Function to add a new competition
+            function addNewCompetition(compName, faculty, lastDate, teacherName, pdfURL) {
+                // Create a new row for the UI
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><a href="${pdfURL || '#'}" target="_blank">${compName}</a></td>
+                    <td>${faculty || 'Not specified'}</td>
+                    <td>${lastDate || 'Not specified'}</td>
+                    <td>${teacherName || 'Not specified'}</td>
+                    <td>${pdfURL ? `<a href="${pdfURL}" target="_blank">View PDF</a>` : 'No PDF'}</td>
+                    <td>
+                        <button class="edit-btn">Edit</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                `;
+                compList.appendChild(row);
+                
+                // Save to localStorage
+                saveCompetitions();
+                
+                // Notify user
+                alert("Competition added successfully! It will now appear in the Latest Events list and Registration form.");
+            }
+            
+            function saveCompetitions() {
+                let rows = [];
+                document.querySelectorAll("#competitionList tr").forEach(row => {
+                    const pdfCell = row.cells[4];
+                    const pdfUrl = pdfCell.textContent === 'No PDF' ? '' : pdfCell.querySelector("a").href;
+                    
+                    // Get the raw values from cells
+                    const name = row.cells[0].innerText;
+                    const faculty = row.cells[1].innerText;
+                    const date = row.cells[2].innerText;
+                    const coordinator = row.cells[3].innerText;
+                    
+                    // Create the competition object with proper handling of empty values
+                    const competition = {
+                        name: name,
+                        faculty: faculty === 'Not specified' ? '' : faculty,
+                        date: date === 'Not specified' ? '' : date,
+                        coordinator: coordinator === 'Not specified' ? '' : coordinator,
+                        pdf: pdfUrl
+                    };
+                    
+                    rows.push(competition);
+                });
+                
+                // Save to localStorage
+                localStorage.setItem("competitions", JSON.stringify(rows));
+                
+                // Log the saved data for debugging
+                console.log('Saved competitions:', rows);
+            }
+            
+            function loadCompetitions(facultyFilter = 'all') {
+                let stored = JSON.parse(localStorage.getItem("competitions")) || [];
+                compList.innerHTML = ""; // Clear existing rows
+                
+                // Filter out expired competitions
+                const today = new Date();
+                let validCompetitions = [];
+                let visibleCompetitions = 0;
+                
+                stored.forEach(data => {
+                    // Handle date validation
+                    let lastDate = null;
+                    if (data.date) {
+                        try {
+                            lastDate = new Date(data.date);
+                        } catch (e) {
+                            console.error('Invalid date:', data.date);
+                        }
+                    }
+                    
+                    // Add competition if it has no date or if the date is not expired
+                    if (!lastDate || lastDate >= today) {
+                        validCompetitions.push(data);
+                        
+                        // Skip if faculty filter is active and doesn't match
+                        if (facultyFilter !== 'all' && data.faculty !== facultyFilter) {
+                            return;
+                        }
+                        
+                        let row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td><a href="${data.pdf || '#'}" target="_blank">${data.name}</a></td>
+                            <td>${data.faculty || 'Not specified'}</td>
+                            <td>${data.date || 'Not specified'}</td>
+                            <td>${data.coordinator || 'Not specified'}</td>
+                            <td>${data.pdf ? `<a href="${data.pdf}" target="_blank">View PDF</a>` : 'No PDF'}</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        `;
+                        compList.appendChild(row);
+                        visibleCompetitions++;
+                    }
+                });
+                
+                // Update localStorage with valid competitions
+                if (stored.length !== validCompetitions.length) {
+                    localStorage.setItem("competitions", JSON.stringify(validCompetitions));
+                }
+                
+                // Display message if no competitions are visible
+                if (visibleCompetitions === 0) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td colspan="6" style="text-align: center;">
+                            ${facultyFilter === 'all' 
+                                ? 'No competitions available at this time.' 
+                                : `No competitions available for ${facultyFilter} at this time.`}
+                        </td>
+                    `;
+                    compList.appendChild(row);
+                }
+                
+                // Log the loaded data for debugging
+                console.log('Loaded competitions:', validCompetitions);
+            }
+            
+            compList.addEventListener("click", function (e) {
+                // Delete button handler
+                if (e.target.classList.contains("delete-btn")) {
+                    if (confirm("Are you sure you want to delete this competition?")) {
+                        e.target.closest("tr").remove();
+                        saveCompetitions();
+                        alert("Competition deleted successfully!");
+                    }
+                }
+                
+                // Edit button handler
+                if (e.target.classList.contains("edit-btn")) {
+                    const row = e.target.closest("tr");
+                    const name = row.cells[0].innerText;
+                    const faculty = row.cells[1].innerText;
+                    const date = row.cells[2].innerText;
+                    const coordinator = row.cells[3].innerText;
+                    const pdfCell = row.cells[4];
+                    const hasPdf = pdfCell.textContent !== 'No PDF';
+                    const pdfUrl = hasPdf ? pdfCell.querySelector("a").href : '';
+                    
+                    // Populate form for editing
+                    document.getElementById("compName").value = name;
+                    document.getElementById("teacherName").value = coordinator === 'Not specified' ? '' : coordinator;
+                    
+                    // Set faculty dropdown
+                    const facultySelect = document.getElementById("faculty");
+                    for (let i = 0; i < facultySelect.options.length; i++) {
+                        if (facultySelect.options[i].value === faculty) {
+                            facultySelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    // Set date if it exists
+                    if (date !== 'Not specified') {
+                        const dateParts = date.split('/');
+                        let formattedDate = '';
+                        if (dateParts.length === 3) {
+                            formattedDate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}`;
+                        } else {
+                            const dateObj = new Date(date);
+                            if (!isNaN(dateObj.getTime())) {
+                                formattedDate = dateObj.toISOString().split('T')[0];
+                            }
+                        }
+                        document.getElementById("lastDate").value = formattedDate;
+                    }
+                    
+                    // Show edit PDF section and hide regular PDF section
+                    document.getElementById("pdfSection").style.display = "none";
+                    document.getElementById("editPdfSection").style.display = "block";
+                    
+                    // Store the row reference and PDF URL for updating later
+                    form.dataset.editingRow = row.rowIndex;
+                    form.dataset.currentPdfUrl = pdfUrl;
+                    
+                    // Show edit buttons and hide add button
+                    document.getElementById("editButtons").style.display = "block";
+                    document.getElementById("addButton").style.display = "none";
+                    
+                    // Scroll to form
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            
+            // Handle PDF options
+            document.getElementById("editPdfSection").addEventListener("click", function(e) {
+                if (e.target.id === "uploadNewPdf") {
+                    document.getElementById("pdfUploadSection").style.display = "block";
+                } else if (e.target.id === "removePdf") {
+                    if (confirm("Are you sure you want to remove this PDF?")) {
+                        form.dataset.currentPdfUrl = '';
+                        document.getElementById("pdfUploadSection").style.display = "none";
+                        e.target.style.display = "none";
+                    }
+                }
+            });
+            
+            // Cancel edit button handler
+            document.getElementById("cancelEdit").addEventListener("click", function() {
+                form.reset();
+                delete form.dataset.editingRow;
+                delete form.dataset.currentPdfUrl;
+                document.getElementById("pdfSection").style.display = "block";
+                document.getElementById("editPdfSection").style.display = "none";
+                document.getElementById("editButtons").style.display = "none";
+                document.getElementById("addButton").style.display = "block";
+            });
+            
+            // Set up faculty filter
+            const facultyFilter = document.getElementById("faculty-filter");
+            facultyFilter.addEventListener("change", function() {
+                loadCompetitions(this.value);
+            });
+            
+            // Initial load of competitions
+            loadCompetitions();
+        });
+
+        // Add this new function to handle section switching
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('registrations-section').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+            
+            // Update button styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load registrations if that section is selected
+            if (sectionName === 'registrations') {
+                loadRegistrations();
+            }
+        }
+
+        // Add this new function to load and display registrations
+        function loadRegistrations(facultyFilter = 'all', competitionFilter = 'all') {
+            const registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+            const competitions = JSON.parse(localStorage.getItem("competitions")) || [];
+            const registrationsList = document.getElementById("registrations-list");
+            const competitionSelect = document.getElementById("competition-filter");
+            
+            // Clear existing rows
+            registrationsList.innerHTML = "";
+            
+            // Update competition filter options based on faculty selection
+            competitionSelect.innerHTML = '<option value="all">All Competitions</option>';
+            if (facultyFilter !== 'all') {
+                competitions.forEach(comp => {
+                    if (comp.faculty === facultyFilter || !comp.faculty) {
+                        const option = document.createElement("option");
+                        option.value = comp.name;
+                        option.textContent = comp.name;
+                        competitionSelect.appendChild(option);
+                    }
+                });
+            } else {
+                competitions.forEach(comp => {
+                    const option = document.createElement("option");
+                    option.value = comp.name;
+                    option.textContent = comp.name;
+                    competitionSelect.appendChild(option);
+                });
+            }
+            
+            // Set the selected competition value
+            competitionSelect.value = competitionFilter;
+            
+            if (registrations.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = "<td colspan='3' style='text-align: center;'>No registrations found.</td>";
+                registrationsList.appendChild(row);
+                return;
+            }
+            
+            // Filter registrations based on faculty and competition
+            const filteredRegistrations = registrations.filter(registration => {
+                const matchesFaculty = facultyFilter === 'all' || registration.faculty === facultyFilter;
+                const matchesCompetition = competitionFilter === 'all' || registration.event === competitionFilter;
+                return matchesFaculty && matchesCompetition;
+            });
+            
+            if (filteredRegistrations.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = "<td colspan='3' style='text-align: center;'>No registrations found for the selected filters.</td>";
+                registrationsList.appendChild(row);
+                return;
+            }
+            
+            // Add each filtered registration as a row
+            filteredRegistrations.forEach(registration => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${registration.name}</td>
+                    <td>${registration.rollNumber}</td>
+                    <td>
+                        <input type="text" class="position-input" 
+                               data-registration-id="${registration.rollNumber}" 
+                               data-event="${registration.event}"
+                               value="${registration.position || ''}"
+                               placeholder="Enter position">
+                    </td>
+                `;
+                registrationsList.appendChild(row);
+            });
+
+            // Add event listeners to position inputs
+            document.querySelectorAll('.position-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const rollNumber = this.getAttribute('data-registration-id');
+                    const event = this.getAttribute('data-event');
+                    const position = this.value.trim();
+                    
+                    // Update the registration in localStorage
+                    const registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+                    const updatedRegistrations = registrations.map(reg => {
+                        if (reg.rollNumber === rollNumber && reg.event === event) {
+                            return { ...reg, position };
+                        }
+                        return reg;
+                    });
+                    
+                    localStorage.setItem("registrations", JSON.stringify(updatedRegistrations));
+                });
+            });
+        }
+
+        // Add event listeners for filters
+        document.addEventListener("DOMContentLoaded", function() {
+            // ... existing DOMContentLoaded code ...
+
+            // Add event listeners for registration filters
+            const registrationFacultyFilter = document.getElementById("registration-faculty-filter");
+            const competitionFilter = document.getElementById("competition-filter");
+            const certificateSection = document.getElementById("certificate-section");
+            const generateCertificateBtn = document.getElementById("generate-certificate");
+
+            function updateCertificateButton() {
+                const facultyValue = registrationFacultyFilter.value;
+                const competitionValue = competitionFilter.value;
+                
+                // Show certificate button only when both filters are selected
+                if (facultyValue !== 'all' && competitionValue !== 'all') {
+                    certificateSection.style.display = 'block';
+                } else {
+                    certificateSection.style.display = 'none';
+                }
+            }
+
+            registrationFacultyFilter.addEventListener("change", function() {
+                loadRegistrations(this.value, competitionFilter.value);
+                updateCertificateButton();
+            });
+
+            competitionFilter.addEventListener("change", function() {
+                loadRegistrations(registrationFacultyFilter.value, this.value);
+                updateCertificateButton();
+            });
+
+            // Add certificate generation functionality
+            generateCertificateBtn.addEventListener("click", function() {
+                const faculty = registrationFacultyFilter.value;
+                const competition = competitionFilter.value;
+                const registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+                
+                // Filter registrations for the selected faculty and competition
+                const filteredRegistrations = registrations.filter(reg => 
+                    reg.faculty === faculty && reg.event === competition
+                );
+
+                if (filteredRegistrations.length === 0) {
+                    alert("No registrations found for certificate generation.");
+                    return;
+                }
+
+                // Create certificate data
+                const certificateData = {
+                    faculty: faculty,
+                    competition: competition,
+                    students: filteredRegistrations.map(reg => ({
+                        name: reg.name,
+                        rollNumber: reg.rollNumber,
+                        position: reg.position || 'Participated'
+                    }))
+                };
+
+                // Store certificate data in localStorage
+                localStorage.setItem("certificateData", JSON.stringify(certificateData));
+
+                // Open certificate page in a new tab
+                window.open("Certificate.html", "_blank");
+            });
+        });
+    </script>
+</body>
+</html>
