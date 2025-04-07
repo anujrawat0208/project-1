@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Certificates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .certificate {
+            width: 850px;
+            height: 600px;
+            margin: 20px auto;
+            padding: 30px;
+            border: 1px solid #d4af37;
+            background-color: white;
+            position: relative;
+            page-break-after: always;
+            overflow: hidden;
+        }
+        .certificate::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #d4af37;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+        .triangle-top-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background-color: #49c4e5;
+            clip-path: polygon(100% 0, 0 0, 100% 100%);
+        }
+        .triangle-bottom-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            background-color: #49c4e5;
+            clip-path: polygon(0 0, 0 100%, 100% 100%);
+        }
+        .triangle-element {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #49c4e5;
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+        }
+        .triangle1 {
+            top: 120px;
+            right: 150px;
+            transform: rotate(180deg);
+        }
+        .triangle2 {
+            top: 190px;
+            right: 70px;
+        }
+        .triangle3 {
+            bottom: 160px;
+            left: 70px;
+            transform: rotate(180deg);
+        }
+        .certificate-header {
+            text-align: center;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .university-name {
+            color: #2980b9;
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        .university-status {
+            color: #2980b9;
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .university-location {
+            color: #2980b9;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .university-logo {
+            width: 100px;
+            height: 100px;
+            margin: 10px auto;
+            display: block;
+        }
+        .certificate-title {
+            text-align: center;
+            font-size: 24px;
+            margin: 15px 0;
+            position: relative;
+            z-index: 2;
+        }
+        .student-name {
+            font-size: 38px;
+            font-weight: bold;
+            color: #2980b9;
+            text-align: center;
+            margin: 15px 0;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+        }
+        .name-underline {
+            border-bottom: 1px solid #333;
+            width: 80%;
+            margin: 10px auto;
+        }
+        .certificate-text {
+            text-align: center;
+            font-size: 16px;
+            margin: 20px 0;
+            position: relative;
+            z-index: 2;
+            line-height: 1.5;
+        }
+        .certificate-date {
+            margin-top: 30px;
+            text-align: left;
+            margin-left: 50px;
+            position: relative;
+            z-index: 2;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 50px;
+            position: relative;
+            z-index: 2;
+        }
+        .signature {
+            text-align: center;
+            width: 200px;
+        }
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 150px;
+            margin: 0 auto;
+        }
+        .signature-name {
+            font-weight: bold;
+            color: #2980b9;
+            margin: 5px 0;
+        }
+        .signature-title {
+            font-size: 14px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .print-btn {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .print-btn:hover {
+            background-color: #1c638d;
+        }
+        @media print {
+            .controls {
+                display: none;
+            }
+            .certificate {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+            }
+        }
+        
+        /* Custom Certificate Styles */
+        .custom-certificate {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            margin: 20px auto;
+            position: relative;
+            page-break-after: always;
+            overflow: hidden;
+        }
+        
+        .custom-certificate-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .custom-template-bg {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+        
+        .custom-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            color: #000;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .custom-content .student-name {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2980b9;
+        }
+        
+        .custom-content .certificate-details {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        
+        /* Adjustments for print */
+        @media print {
+            .custom-certificate {
+                width: 100%;
+                height: auto;
+                margin: 0;
+                page-break-after: always;
+            }
+            
+            .custom-template-bg {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="certificates-container"></div>
+        <div class="controls">
+            <button class="print-btn" onclick="window.print()">Print All Certificates</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const certificateData = JSON.parse(localStorage.getItem('certificateData'));
+            const container = document.getElementById('certificates-container');
+
+            if (!certificateData || !certificateData.students || certificateData.students.length === 0) {
+                container.innerHTML = '<p style="text-align: center;">No certificate data found.</p>';
+                return;
+            }
+
+            // Generate certificate for each student
+            certificateData.students.forEach(student => {
+                // Get complete student registration data
+                const registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+                const studentRegistration = registrations.find(reg => 
+                    reg.rollNumber === student.rollNumber && 
+                    reg.event === certificateData.competition &&
+                    reg.faculty === certificateData.faculty
+                ) || student;
+
+                // Create certificate based on template type
+                if (certificateData.templateType === 'custom' && certificateData.templateUrl) {
+                    createCustomCertificate(container, studentRegistration, certificateData);
+                } else {
+                    createDefaultCertificate(container, studentRegistration, certificateData);
+                }
+            });
+        });
+
+        // Function to create a certificate using the default template
+        function createDefaultCertificate(container, studentRegistration, certificateData) {
+            const certificate = document.createElement('div');
+            certificate.className = 'certificate';
+            
+            // Get current date in format: DD/MM/YYYY
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-GB');
+            
+            certificate.innerHTML = `
+                <div class="triangle-top-right"></div>
+                <div class="triangle-bottom-left"></div>
+                <div class="triangle-element triangle1"></div>
+                <div class="triangle-element triangle2"></div>
+                <div class="triangle-element triangle3"></div>
+                
+                <div class="certificate-header">
+                    <h1 class="university-name">DAYALBAGH EDUCATIONAL INSTITUTE</h1>
+                    <p class="university-status">DEEMED to be UNIVERSITY</p>
+                    <p class="university-location">DAYALBAGH, AGRA</p>
+                    <img class="university-logo" src="logo.png" alt="University Logo">
+                </div>
+                
+                <div class="certificate-title">CERTIFICATE GIVEN TO</div>
+                <div class="student-name">${studentRegistration.name}</div>
+                <div class="name-underline"></div>
+                
+                <div class="certificate-text">
+                    Certified that student ${studentRegistration.name} 
+                    ${studentRegistration.gender === 'Male' ? 'son' : 'daughter'} of ${studentRegistration.fatherName || '___________'} 
+                    student of ${certificateData.faculty} participate in ${certificateData.competition} 
+                    and won ${studentRegistration.position || 'participation'}.
+                </div>
+                
+                <div class="certificate-date">DATE : ${dateStr}</div>
+                
+                <div class="signature-section">
+                    <div class="signature">
+                        <div class="signature-line"></div>
+                        <p class="signature-title">CO-ORDINATOR</p>
+                    </div>
+                    <div class="signature">
+                        <div class="signature-line"></div>
+                        <p class="signature-title">DIRECTOR</p>
+                    </div>
+                </div>
+            `;
+            container.appendChild(certificate);
+        }
+
+        // Function to create a certificate using a custom template
+        function createCustomCertificate(container, studentRegistration, certificateData) {
+            const certificate = document.createElement('div');
+            certificate.className = 'custom-certificate';
+            
+            // Get current date
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-GB');
+            
+            // Create the certificate content
+            certificate.innerHTML = `
+                <div class="custom-certificate-wrapper">
+                    <img src="${certificateData.templateUrl}" class="custom-template-bg" alt="Certificate Template">
+                    <div class="custom-content">
+                        <div class="student-name">${studentRegistration.name}</div>
+                        <div class="certificate-details">
+                            <p>Participated in ${certificateData.competition}</p>
+                            <p>Faculty: ${certificateData.faculty}</p>
+                            <p>Position: ${studentRegistration.position || 'Participation'}</p>
+                            <p>Roll Number: ${studentRegistration.rollNumber}</p>
+                            <p>Date: ${dateStr}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add the certificate to the container
+            container.appendChild(certificate);
+            
+            // Set up the template image onload event to adjust content
+            const templateImg = certificate.querySelector('.custom-template-bg');
+            templateImg.onload = function() {
+                // Adjust font sizes based on the template dimensions
+                const containerWidth = this.width;
+                const containerHeight = this.height;
+                
+                // Get the content elements
+                const content = certificate.querySelector('.custom-content');
+                const studentName = content.querySelector('.student-name');
+                const details = content.querySelector('.certificate-details');
+                
+                // Scale fonts based on template size
+                if (containerWidth > 1000) {
+                    studentName.style.fontSize = '48px';
+                    details.style.fontSize = '22px';
+                } else if (containerWidth < 600) {
+                    studentName.style.fontSize = '28px';
+                    details.style.fontSize = '14px';
+                }
+                
+                // If the template is very small, reduce the padding
+                if (containerWidth < 500 || containerHeight < 400) {
+                    content.style.padding = '10px';
+                }
+                
+                // For vertical templates
+                if (containerHeight > containerWidth * 1.2) {
+                    content.style.justifyContent = 'flex-start';
+                    content.style.paddingTop = '35%';
+                }
+            };
+        }
+    </script>
+</body>
+</html> 
